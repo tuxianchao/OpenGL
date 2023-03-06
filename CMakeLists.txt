@@ -20,7 +20,6 @@ endif(WIN32)
 # spdlog
 set(SPDLOG_DIR ${CMAKE_SOURCE_DIR}/third_party/spdlog)
 include_directories(${SPDLOG_DIR}/include)
-
 add_subdirectory(${SPDLOG_DIR})
 
 # glfw
@@ -46,6 +45,7 @@ add_library(stb ${CMAKE_SOURCE_DIR}/third_party/stb_image.cpp)
 # imgui
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/third_party/imgui)
 include_directories(${IMGUI_DIR})
+include_directories(${IMGUI_DIR}/backends)
 add_library("imgui" "${IMGUI_DIR}/imgui.cpp"
                   "${IMGUI_DIR}/imgui_demo.cpp"
                   "${IMGUI_DIR}/imgui_draw.cpp"
@@ -56,9 +56,13 @@ add_library("imgui" "${IMGUI_DIR}/imgui.cpp"
                   "${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp"
                   )
 
+# assimp                  
+set(ASSIMP_DIR ${CMAKE_SOURCE_DIR}/third_party/assimp)
+include_directories(${ASSIMP_DIR}/include)
+add_subdirectory(${ASSIMP_DIR})
 
 if(WIN32)
-      set(LIBS spdlog glfw glad stb imgui opengl32)
+      set(LIBS spdlog glfw glad stb imgui assimp opengl32)
       add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 elseif(APPLE)
       INCLUDE_DIRECTORIES(/System/Library/Frameworks)
@@ -67,11 +71,14 @@ elseif(APPLE)
       FIND_LIBRARY(IOKit_LIBRARY IOKit)
       FIND_LIBRARY(CoreVideo_LIBRARY CoreVideo)
       MARK_AS_ADVANCED(COCOA_LIBRARY OpenGL_LIBRARY)
-      SET(LIBS ${COCOA_LIBRARY} ${IOKit_LIBRARY} ${OpenGL_LIBRARY} spdlog glfw glad stb imgui ${CoreVideo_LIBRARY})
+      SET(LIBS ${COCOA_LIBRARY} ${IOKit_LIBRARY} ${OpenGL_LIBRARY} spdlog glfw glad stb imgui assimp ${CoreVideo_LIBRARY})
 endif(WIN32)
 
 
+# lib test
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_spdlog)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_imgui)
+
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/0.hello_world)
-
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.1.hello_window)
