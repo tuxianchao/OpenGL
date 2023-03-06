@@ -82,3 +82,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_imgui)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/0.hello_world)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.1.hello_window)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.2.hello_window_clear)
