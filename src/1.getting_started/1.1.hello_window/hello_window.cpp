@@ -1,6 +1,6 @@
 #include "glad.h"
 #include "GLFW/glfw3.h"
-
+#include "spdlog/spdlog.h"
 #include <iostream>
 
 const unsigned int SCREEN_WIDTH = 800;
@@ -12,13 +12,14 @@ void processInput(GLFWwindow *window);
 
 int main()
 {
+    spdlog::info("start.....");
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
     //  glfw create window
@@ -36,7 +37,7 @@ int main()
     // glad: load all OpenGL function pointer
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Faile to initialize GLAD." << std::endl;
+        spdlog::info("Faile to initialize GLAD.");
         glfwTerminate();
         return -1;
     }
@@ -63,8 +64,7 @@ int main()
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-    std::cout << "frame buffer resize"
-              << "width: " << width << " height: " << height << std::endl;
+    spdlog::info("frame buffer resize width: {0}, height: {1}", width, height);
     glViewport(0, 0, width, height);
 }
 
