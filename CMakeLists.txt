@@ -22,6 +22,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 set(CMAKE_DEBUG_POSTFIX "_debug")    
 set(CMAKE_RELEASE_POSTFIX "_release") 
 
+
+configure_file(configuration/root_directory.h.in configuration/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/configuration)
+
 # spdlog
 set(SPDLOG_DIR ${CMAKE_SOURCE_DIR}/third_party/spdlog)
 include_directories(${SPDLOG_DIR}/include)
@@ -83,6 +87,7 @@ endif(WIN32)
 # lib test
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_spdlog)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_imgui)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_root_dir)
 
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/0.hello_world)

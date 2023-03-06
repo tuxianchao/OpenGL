@@ -1,0 +1,2 @@
+const char * root_dir = "${CMAKE_SOURCE_DIR}";
+const char * root_resource_dir = "${CMAKE_SOURCE_DIR}/resource";
