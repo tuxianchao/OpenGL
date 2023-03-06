@@ -1,4 +1,4 @@
-set(NAME 1.1.hello_window)
+set(NAME 2.1.hello_triangle)
 file(GLOB SOURCE
     "*.h"
     "*.cpp"

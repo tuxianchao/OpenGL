@@ -15,7 +15,12 @@ Message(${CMAKE_BUILD_TYPE})
 # output
 if(WIN32)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+      set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 endif(WIN32)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+set(CMAKE_DEBUG_POSTFIX "_debug")    
+set(CMAKE_RELEASE_POSTFIX "_release") 
 
 # spdlog
 set(SPDLOG_DIR ${CMAKE_SOURCE_DIR}/third_party/spdlog)
@@ -83,3 +88,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_imgui)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/0.hello_world)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.1.hello_window)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.2.hello_window_clear)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.1.hello_triangle)
