@@ -175,22 +175,25 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0); // 解绑
     glBindVertexArray(0);
 
+
+    unsigned int frame = 0;
     // render loop
     while (!glfwWindowShouldClose(window))
     {
         // input
         processInput(window);
+        frame++;
 
         // render
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
-        glUseProgram(shaderProgram1);
+        glUseProgram(frame % 2 == 0 ? shaderProgram1 : shaderProgram2);
         glBindVertexArray(VAOs[0]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glUseProgram(shaderProgram2);
+        glUseProgram(frame % 2 == 0 ? shaderProgram2 : shaderProgram1);
         glBindVertexArray(VAOs[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
