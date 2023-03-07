@@ -1,4 +1,4 @@
-#include "glad.h"
+﻿#include "glad.h"
 #include "GLFW/glfw3.h"
 
 #include "iostream"
@@ -36,8 +36,7 @@ int main()
 #endif
 
 	// glfw window create
-
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "hello_window_clear", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "hello_triangle", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
