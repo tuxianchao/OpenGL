@@ -25,7 +25,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
 int main()
 {
     // glfw: initialize and configure
-    // 初始化glfw 设置为opengl 3.3
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -36,7 +36,8 @@ int main()
 #endif
 
     // glfw window create
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "hello_triangle", NULL, NULL);
+
+    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "hello_window_clear", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -97,42 +98,47 @@ int main()
                   << infoLog << std::endl;
     }
 
-    // 链接成为shader program后就不在需要顶点shader和片源shader对象了
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-        0.5f, -0.5f, 0.0f,  // right
-        0.0f, 0.5f, 0.0f    // top
+    float firstTriangle[] = {
+        -0.9f, -0.5f, 0.0f, // left
+        -0.0f, -0.5f, 0.0f, // right
+        -0.45f, 0.5f, 0.0f, // top
     };
+    float secondTriangle[] = {
+        0.0f, -0.5f, 0.0f, // left
+        0.9f, -0.5f, 0.0f, // right
+        0.45f, 0.5f, 0.0f  // top
+    };
+    unsigned int VAOs[2];
+    unsigned int VBOs[2];
 
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);                                                     // 生成顶点缓冲
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);                                        // 绑定顶点缓冲
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // 传输数据
+    // first triangle
+    glGenVertexArrays(1, &VAOs[0]);
+    glBindVertexArray(VAOs[0]);
 
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO); // 创建顶点数组
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);                                                        // 绑定顶点数组
-    // 顶点数组对象 在被绑定后，任何随后的设置顶点属性调用都会被存储在这个VAO中，所以看起来就是，VAO保存了一堆顶点属性的状态或者叫做存储了顶点的属性配置
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0); // 设置顶点属性
-    // 第一个参数: 指定对应顶点中的layout 0
-    // 第二个参数: 指定顶点属性的大小
-    // 第三个参数: 指定数据类型
-    // 第四个参数: 指定数据是否被normalize
-    // 第五个参数: 指定数据的步长
-    // 第六个参数: 起点offset
-    glEnableVertexAttribArray(0);                                                  // 启用顶点属性 0
+    glGenBuffers(1, &VBOs[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangle), firstTriangle, GL_STATIC_DRAW);
 
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0); // Vertex attributes stay the same
+    glEnableVertexAttribArray(0);
+
+    // second triangle
+    glGenVertexArrays(1, &VAOs[1]);
+    glBindVertexArray(VAOs[1]);
+
+    glGenBuffers(1, &VBOs[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangle), secondTriangle, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0); // Vertex attributes stay the same
+    glEnableVertexAttribArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0); // 解绑
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    // glBindVertexArray(0); // 解绑
+    glBindVertexArray(0);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -146,7 +152,10 @@ int main()
 
         // draw our first triangle
         glUseProgram(shaderProgram);
-        // glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        glBindVertexArray(VAOs[0]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindVertexArray(VAOs[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // glfw: swap buffer and poll IO event(key pressed/released, mouse moved etc.)
@@ -156,8 +165,10 @@ int main()
 
     // exit
     glfwTerminate();
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAOs[0]);
+    glDeleteVertexArrays(1, &VAOs[1]);
+    glDeleteBuffers(1, &VBOs[0]);
+    glDeleteBuffers(1, &VBOs[1]);
     glDeleteProgram(shaderProgram);
     return 0;
 }
@@ -179,9 +190,3 @@ void processInput(GLFWwindow *window)
         return;
     }
 }
-
-
-// 总结
-// VBO 实际存储的顶点的缓冲
-// 通过激活一个一个顶点属性来把顶点属性对应到顶点shader的layout上，不过比较麻烦，此时可以用VAO这个缓冲来保存这些配置，使用时enable一下就可以了
-// EBO 顶点缓冲的索引，减小数据量的存储

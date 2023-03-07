@@ -100,3 +100,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/0.hello_world)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.1.hello_window)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.2.hello_window_clear)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.1.hello_triangle)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.2.hello_triangle_indexed)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.3.hello_triangle_exercise1)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.4.hello_triangle_exercise2)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.5.hello_triangle_exercise3)
+
