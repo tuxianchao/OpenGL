@@ -19,8 +19,8 @@ if(WIN32)
 endif(WIN32)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
-set(CMAKE_DEBUG_POSTFIX "_debug")    
-set(CMAKE_RELEASE_POSTFIX "_release") 
+set(CMAKE_DEBUG_POSTFIX "_debug")
+set(CMAKE_RELEASE_POSTFIX "_release")
 
 
 configure_file(configuration/root_directory.h.in configuration/root_directory.h)
@@ -65,7 +65,7 @@ add_library("imgui" "${IMGUI_DIR}/imgui.cpp"
                   "${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp"
                   )
 
-# assimp                  
+# assimp
 set(ASSIMP_DIR ${CMAKE_SOURCE_DIR}/third_party/assimp)
 include_directories(${ASSIMP_DIR}/include)
 add_subdirectory(${ASSIMP_DIR})
