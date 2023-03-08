@@ -39,7 +39,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "shader_uniform", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "shaders_uniform", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -55,6 +55,12 @@ int main()
         glfwTerminate();
         return -1;
     }
+
+
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    spdlog::info("OpenGL::GL_MAX_VERTEX_ATTRIBS = {0}", nrAttributes);
+
 
     // build and compile shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);

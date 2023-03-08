@@ -1,4 +1,4 @@
-set(NAME 3.1.shader_uniform)
+set(NAME 3.1.shaders_uniform)
 file(GLOB SOURCE
     "*.h"
     "*.cpp"
