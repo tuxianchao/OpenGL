@@ -28,7 +28,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "shaders_class", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "shaders_exercise1", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -50,7 +50,7 @@ int main()
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     spdlog::info("OpenGL::GL_MAX_VERTEX_ATTRIBS = {0}", nrAttributes);
 
-    Shader shader("shaders_class.vs", "shaders_class.fs");
+    Shader shader("shaders_exercise1.vs", "shaders_exercise1.fs");
 
     // setup vertex data (and buffer)
     // =============================
