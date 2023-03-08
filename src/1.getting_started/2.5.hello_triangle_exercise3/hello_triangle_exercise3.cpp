@@ -1,3 +1,4 @@
+#pragma comment(linker, "/subsystem:\"windows\"  /entry:\"mainCRTStartup\"")
 #include "glad.h"
 #include "GLFW/glfw3.h"
 

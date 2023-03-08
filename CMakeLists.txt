@@ -104,4 +104,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.2.hello_triangle_in
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.3.hello_triangle_exercise1)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.4.hello_triangle_exercise2)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/2.5.hello_triangle_exercise3)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.1.shader_uniform)
 
