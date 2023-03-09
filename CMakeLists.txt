@@ -108,4 +108,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.1.shaders_uniform)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.2.shaders_interpolation)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.3.shaders_class)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.4.shaders_exercise1)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.5.shaders_exercise2)
 
