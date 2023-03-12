@@ -96,6 +96,51 @@ macro(makeLink src dest target)
 endmacro()
 
 
+
+# config_target
+function(config_target target_name target_dir)
+    set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin/${target_name})
+    if(WIN32)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+        set_property(TARGET ${target_name} PROPERTY  FOLDER ${target_dir})
+        set_target_properties(${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}")
+        set_target_properties(${target_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${BIN_DIR}/${CMAKE_BUILD_TYPE}")
+    elseif(APPLE)
+        set_target_properties(${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}")
+        set_target_properties(${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${BIN_DIR}/immediate/Debug")
+        set_target_properties(${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${BIN_DIR}/immediate/Release")
+        set_target_properties(${target_name} PROPERTIES XCODE_GENERATE_SCHEME TRUE
+                                    XCODE_SCHEME_WORKING_DIRECTORY ${BIN_DIR})
+        if(EXISTS ${BIN_DIR})
+        else()
+            make_directory(${BIN_DIR})
+        endif()
+    endif(WIN32)
+
+    # 拷贝shader
+    file(GLOB SHADERS
+    "*.vs"
+    "*.frag"
+    "*.fs"
+    "*.gs"
+    "*.cs"
+    )
+
+    foreach(SHADER ${SHADERS})
+        if(WIN32)
+            # configure_file(${SHADER} "test")
+            message(copy ${SHADER})
+            add_custom_command(TARGET ${NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SHADER} $<TARGET_FILE_DIR:${NAME}>)
+        elseif(APPLE)
+            # create symbolic link for *.vs *.fs *.gs
+            get_filename_component(SHADERNAME ${SHADER} NAME)
+            makeLink(${SHADER} ${BIN_DIR}/${SHADERNAME} ${NAME})
+            message(STATUS "makeLink ${SHADER} => ${BIN_DIR}/${SHADERNAME}")
+        endif(WIN32)
+    endforeach(SHADER)
+endfunction()
+
+
 # lib test
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_spdlog)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_imgui)
