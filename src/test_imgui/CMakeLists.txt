@@ -7,7 +7,7 @@ file(GLOB SOURCE
 
 
 add_executable(${NAME} ${SOURCE})
-target_link_libraries(${NAME} spdlog glfw glad stb imgui opengl32)
+target_link_libraries(${NAME} ${LIBS})
 
 set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin/${NAME})
 if(WIN32)

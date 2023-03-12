@@ -90,12 +90,18 @@ elseif(APPLE)
 endif(WIN32)
 
 
+
+macro(makeLink src dest target)
+  add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink ${src} ${dest}  DEPENDS  ${dest} COMMENT "mklink ${src} -> ${dest}")
+endmacro()
+
+
 # lib test
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_spdlog)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_imgui)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_root_dir)
 
-
+# course
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/0.hello_world)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.1.hello_window)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.2.hello_window_clear)
