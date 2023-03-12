@@ -51,6 +51,10 @@ set(GLAD_DIR ${CMAKE_SOURCE_DIR}/third_party/glad)
 include_directories(${GLAD_DIR})
 add_library(glad ${GLAD_DIR}/glad.c)
 
+#glm
+set(GLM_DIR ${CMAKE_SOURCE_DIR}/third_party/glm)
+include_directories(${GLM_DIR})
+add_subdirectory(${GLM_DIR})
 
 # stb
 set(STB_DIR ${CMAKE_SOURCE_DIR}/third_party/stb)
@@ -77,7 +81,7 @@ include_directories(${ASSIMP_DIR}/include)
 add_subdirectory(${ASSIMP_DIR})
 
 if(WIN32)
-      set(LIBS spdlog glfw glad stb imgui assimp opengl32)
+      set(LIBS spdlog glfw glad glm stb imgui assimp opengl32)
       add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 elseif(APPLE)
       INCLUDE_DIRECTORIES(/System/Library/Frameworks)
@@ -86,7 +90,7 @@ elseif(APPLE)
       FIND_LIBRARY(IOKit_LIBRARY IOKit)
       FIND_LIBRARY(CoreVideo_LIBRARY CoreVideo)
       MARK_AS_ADVANCED(COCOA_LIBRARY OpenGL_LIBRARY)
-      SET(LIBS ${COCOA_LIBRARY} ${IOKit_LIBRARY} ${OpenGL_LIBRARY} spdlog glfw glad stb imgui assimp ${CoreVideo_LIBRARY})
+      SET(LIBS ${COCOA_LIBRARY} ${IOKit_LIBRARY} ${OpenGL_LIBRARY} spdlog glfw glad glm stb imgui assimp ${CoreVideo_LIBRARY})
 endif(WIN32)
 
 
@@ -146,7 +150,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_spdlog)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_imgui)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/test_root_dir)
 
-# course
+# course chapter 1
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/0.hello_world)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.1.hello_window)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/1.2.hello_window_clear)
@@ -167,4 +171,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.3.textures_exercise
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.4.textures_exercise2)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.5.textures_exercise3)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.6.textures_exercise4)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/5.1.transformations)
 
+
+# course chapter 2
+
+# course chapter 3
