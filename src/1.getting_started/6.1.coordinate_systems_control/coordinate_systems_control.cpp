@@ -1,7 +1,7 @@
 #include "glad.h"
 #include "GLFW/glfw3.h"
 #include "spdlog/spdlog.h"
-#include "learn_opengl/shader_s.h"
+#include "learn_opengl/shader_m.h"
 
 #include <stb_image.h>
 #include <learn_opengl/file_system.h>
@@ -10,6 +10,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 void frame_buffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -17,7 +20,49 @@ void processInput(GLFWwindow *window);
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
+/*
 
+ 局部空间 Local Space
+ 世界空间 World Space
+ 观察空间 View Space(Eye Space)
+ 裁剪空间 Clip Space 在一个顶点着色器运行的最后，OpenGL期望所有的坐标都能落在一个特定的范围内，且任何在这个范围之外的点都应该被裁剪掉(Clipped)。被裁剪掉的坐标就会被忽略，所以剩下的坐标就将变为屏幕上可见的片段。这也就是裁剪空间(Clip Space)名字的由来。
+ 屏幕空间 Screen Space
+
+ Local Space ==(model matrix)       =>
+ World Space ==(view matrix)        =>
+ View Space  ==(projection matrix)  =>
+ Clip Space  ==(viewport transform) => Screen Space
+
+ 1. 局部坐标是一个相对于局部原点的坐标，也就是是物体的起始坐标，有点像通常说的localX localY localZ
+ 2. 下一步就是将局部坐标变化为世界空间坐标，这个坐标是是相对于世界原摆放后的坐标，有点像通常说的worldX worldY worldZ
+ 3. 接下来就是将世界坐标变化到关键空间了，使得每一个坐标都是从观察者或者说摄像机的角度进行观察的
+ 4. 到了观察者空间后，就系要将其投影到裁剪坐标，裁剪坐标会被处理到-1.0到1.0之间，，并且会判断哪些坐标会出现在屏幕上
+ 5. 最后，将裁剪坐标变换为屏幕坐标，这个过程使用一个叫做视口变换的过程，将位于-1.0到1.0之间的左边变化到由glViewport函数做定义的坐标范围
+ 6. 最后进行光栅化，转化为片段
+
+
+model matrix        ：模型矩阵，理解意义上的描述就是将物体的局部坐标通过平移旋转缩放等操作变换到场景(世界)的不同位置
+view matrix         ：观察矩阵，理解意义上来说，观察空间是将世界空间的坐标转化为用户前方的坐标的结果，就是在世界空间坐标的基础上，
+                      通过一列的位移和旋转来完成，平移或者旋转场景使得特定对象被变换到摄像机的前方。
+projection matrix   ：投影矩阵，把顶点从观察空间变换到裁剪空间，投影矩阵相当于指定了一个坐标范围，例如在每个维度上的-1000到1000
+                      接下来会按照这个范围把坐标变换到标准化范围(-1.0,1.0),所有在此之外的都会被裁剪掉，例如坐标（1250,750,500）
+                     因为x超了，最后会转化出一个大于1.0的坐标，因此会被裁剪掉（不过如果只是图元的一部分超了，那么OpenGL会重建这个图元）
+
+                     * 由投影矩阵定义的观察箱(view Box)被称为平截头体（frustum） 每个出现在平截头体范围内的坐标最后都会出现在用户的屏幕上
+                     * 将特定范围内的坐标转换为标准化设备坐标的过程称之为投影，因为投影矩阵最终能将3d坐标很容易的投影到2d的表转化设备坐标系中
+                     * 一旦所有的顶点被变换到裁剪空间，最终的操作，透视除法将会执行，在这个过程中我们将位置向量的x，y，z分量分别除以向量的齐次w分量；透视除法是将4D裁剪空间坐标变换为3D标准化设备坐标的过程。这一步会在每一个顶点着色器运行的最后被自动执行
+                     * 最终的坐标会被映射到屏幕空间，并被变换为片段
+
+
+正交投影于透视投影
+
+* 正交投影，一个类似于立方体的平截头体，主要参数，宽，高，近裁面和远裁面，w分量全为1.0
+* 透视投影，近大远小的，主要参数fov（视野field of view），近裁面和远裁面
+
+最终  V(clip) =   M(projection) * M(view) * M(model) * V(local)
+
+
+*/
 int main()
 {
 
@@ -34,7 +79,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "transformations_exercise1", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "coordinate_systems_control", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -70,16 +115,16 @@ int main()
         spdlog::info("GL_EXTENSIONS: {0}", (char *)glGetStringi(GL_EXTENSIONS, i));
     }
 
-    Shader shader("transformations_exercise1.vs", "transformations_exercise1.fs");
+    Shader shader("coordinate_systems_control.vs", "coordinate_systems_control.fs");
 
     // setup vertex data (and buffer)
     // =============================
     float vertices[] = {
-        // positions          // colors           // texture coords
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
+        // positions      // texture coords
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f   // top left
     };
 
     unsigned int indices[] = {
@@ -100,16 +145,12 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // pos
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void *)0);
     glEnableVertexAttribArray(0);
 
-    // color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void *)(sizeof(float) * 3));
-    glEnableVertexAttribArray(1);
-
     // texture coord
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void *)(sizeof(float) * 6));
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void *)(sizeof(float) * 3));
+    glEnableVertexAttribArray(1);
 
     // unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -170,6 +211,17 @@ int main()
     shader.setInt("texture0", 0);
     shader.setInt("texture1", 1);
 
+    // setup imgui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    ImGui::StyleColorsDark();
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+    float modelRotate = 0.0f;
+    float viewTranslate = -1.0f;
+    float fov = 45.0f;
 
     unsigned int frame = 0;
     while (!glfwWindowShouldClose(window))
@@ -177,6 +229,21 @@ int main()
         frame++;
         // input
         processInput(window);
+
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        {
+            ImGui::Begin("This is some useful text.");
+            ImGui::NewLine();
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::NewLine();
+            ImGui::SliderFloat("modelRotate", &modelRotate, -360.0f, 360.0f);
+            ImGui::SliderFloat("viewTranslate", &viewTranslate, -5.0f, -1.0f);
+            ImGui::SliderFloat("fov", &fov, 0.0f, 90.0f);
+            ImGui::End();
+        }
 
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -187,19 +254,34 @@ int main()
         glActiveTexture(GL_TEXTURE1); // 在绑定纹理之前先激活纹理单元
         glBindTexture(GL_TEXTURE_2D, texture1);
 
-        // create transformations
-        glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        // 先旋转再平移
-        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        glm::mat4 u_Model       = glm::mat4(1.0);
+        glm::mat4 u_View        = glm::mat4(1.0);
+        glm::mat4 u_Projection  = glm::mat4(1.0);
 
+        // 旋转：绕着X轴旋转
+        u_Model = glm::rotate(u_Model, glm::radians(modelRotate), glm::vec3(1.0f, 0.0f, 0.0f));
+        // 平移：看起来物体后退
+        u_View = glm::translate(u_View, glm::vec3(0.0f, 0.0f, viewTranslate));
+        // 使用一个简单的透视投影
+        float aspectRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
+        u_Projection = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 1000.0f);
 
         shader.use();
-        unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        unsigned int u_ModelLoc      = glGetUniformLocation(shader.ID, "u_Model");
+        unsigned int u_ViewLoc       = glGetUniformLocation(shader.ID, "u_View");
+        unsigned int u_ProjectionLoc = glGetUniformLocation(shader.ID, "u_Projection");
+        // 三种方式设置unifrom
+        glUniformMatrix4fv(u_ModelLoc, 1, GL_FALSE, glm::value_ptr(u_Model));
+        glUniformMatrix4fv(u_ViewLoc, 1, GL_FALSE, &u_View[0][0]);
+        shader.setMat4("u_Projection", u_Projection);
 
+        // draw
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        // Rendering imgui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // glfw: swap buffer and poll io event
         glfwSwapBuffers(window);

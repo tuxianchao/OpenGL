@@ -175,6 +175,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/5.1.transformations)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/5.2.transformations_exercise1)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/5.3.transformations_exercise2)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/6.1.coordinate_systems)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/6.1.coordinate_systems_control)
 
 
 # course chapter 2
