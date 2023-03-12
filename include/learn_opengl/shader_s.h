@@ -47,6 +47,8 @@ public:
 
         const char *vShaderCode = vertexCodeString.c_str();
         const char *fShaderCode = fragmentCodeString.c_str();
+        spdlog::info("read vertex vode: \n{0}", vertexCodeString);
+        spdlog::info("read fragment vode: \n{0}", fragmentCodeString);
         // 2. compile shaders
         unsigned int vertex, fragment;
         // vertex shader

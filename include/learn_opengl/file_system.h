@@ -1,4 +1,4 @@
-#ifdef __FILE_SYSTEM_H__
+#ifndef __FILE_SYSTEM_H__
 #define __FILE_SYSTEM_H__
 
 #include <string>
@@ -7,6 +7,12 @@
 
 class FileSystem
 {
-}
+
+public:
+    static std::string getResPath(const std::string& path)
+    {
+        return root_resource_dir + path;
+    }
+};
 
 #endif
