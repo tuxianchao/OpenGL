@@ -172,6 +172,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.4.textures_exercise
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.5.textures_exercise3)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.6.textures_exercise4)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/5.1.transformations)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/5.2.transformations_exercise1)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/5.3.transformations_exercise2)
 
 
 # course chapter 2
