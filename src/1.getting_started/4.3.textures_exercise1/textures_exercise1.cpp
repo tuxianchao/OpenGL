@@ -28,7 +28,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "4.1.textures", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "textures_exercise1", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -64,7 +64,7 @@ int main()
         spdlog::info("GL_EXTENSIONS: {0}", (char *)glGetStringi(GL_EXTENSIONS, i));
     }
 
-    Shader shader("textures.vs", "textures.fs");
+    Shader shader("textures_exercise1.vs", "textures_exercise1.fs");
 
     // setup vertex data (and buffer)
     // =============================
@@ -111,9 +111,9 @@ int main()
 
     // load texture
     // ===========
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    unsigned int texture0;
+    glGenTextures(1, &texture0);
+    glBindTexture(GL_TEXTURE_2D, texture0); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -135,6 +135,35 @@ int main()
     }
     stbi_image_free(data);
 
+    // load another texture
+    // ===================
+    stbi_set_flip_vertically_on_load(true);
+    unsigned int texture1;
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+    data = stbi_load(FileSystem::getResPath("/textures/awesomeface.png").c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+
+    shader.use();
+    shader.setInt("texture0", 0);
+    shader.setInt("texture1", 1);
+
     unsigned int frame = 0;
     while (!glfwWindowShouldClose(window))
     {
@@ -144,11 +173,14 @@ int main()
 
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        shader.use();
 
         glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, texture0);
 
+        glActiveTexture(GL_TEXTURE1); // 在绑定纹理之前先激活纹理单元
+        glBindTexture(GL_TEXTURE_2D, texture1);
+
+        shader.use();
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

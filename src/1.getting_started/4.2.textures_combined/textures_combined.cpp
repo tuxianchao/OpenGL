@@ -12,7 +12,6 @@ void processInput(GLFWwindow *window);
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
-
 int main()
 {
 
@@ -29,7 +28,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "textures_combined", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "textures_combined", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -50,10 +49,10 @@ int main()
     // ================
     spdlog::info("======================================================");
     spdlog::info("OpenGL Info");
-    spdlog::info("GL_VENDOR: {0}", (char*)glGetString(GL_VENDOR));
-    spdlog::info("GL_RENDERER: {0}", (char*)glGetString(GL_RENDERER));
-    spdlog::info("GL_VERSION: {0}", (char*)glGetString(GL_VERSION));
-    spdlog::info("GL_SHADING_LANGUAGE_VERSION: {0}", (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+    spdlog::info("GL_VENDOR: {0}", (char *)glGetString(GL_VENDOR));
+    spdlog::info("GL_RENDERER: {0}", (char *)glGetString(GL_RENDERER));
+    spdlog::info("GL_VERSION: {0}", (char *)glGetString(GL_VERSION));
+    spdlog::info("GL_SHADING_LANGUAGE_VERSION: {0}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     spdlog::info("GL_MAX_VERTEX_ATTRIBS: {0}", nrAttributes);
@@ -62,14 +61,14 @@ int main()
     glGetIntegerv(GL_NUM_EXTENSIONS, &num_of_extensions);
     for (i = 0; i < num_of_extensions; i++)
     {
-        spdlog::info("GL_EXTENSIONS: {0}", (char*)glGetStringi(GL_EXTENSIONS, i));
+        spdlog::info("GL_EXTENSIONS: {0}", (char *)glGetStringi(GL_EXTENSIONS, i));
     }
 
     Shader shader("textures_combined.vs", "textures_combined.fs");
 
     // setup vertex data (and buffer)
     // =============================
-  float vertices[] = {
+    float vertices[] = {
         // positions          // colors           // texture coords
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
@@ -78,8 +77,8 @@ int main()
     };
 
     unsigned int indices[] = {
-       0, 1, 3, // first triangle
-       1, 2, 3  // second triangle
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
     };
 
     GLuint VAO, VBO, EBO;
@@ -95,24 +94,24 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // pos
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void *)0);
     glEnableVertexAttribArray(0);
 
     // color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void *)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
 
     // texture coord
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 6));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void *)(sizeof(float) * 6));
     glEnableVertexAttribArray(2);
 
     // unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-
     // load texture
     // ===========
+    stbi_set_flip_vertically_on_load(true);
     unsigned int texture0;
     glGenTextures(1, &texture0);
     glBindTexture(GL_TEXTURE_2D, texture0); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
@@ -125,7 +124,7 @@ int main()
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char* data = stbi_load(FileSystem::getResPath("/textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(FileSystem::getResPath("/textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -136,7 +135,6 @@ int main()
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
-
 
     // load another texture
     // ===================
@@ -175,7 +173,6 @@ int main()
 
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-       
 
         glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元
         glBindTexture(GL_TEXTURE_2D, texture0);
@@ -200,14 +197,11 @@ int main()
     return 0;
 }
 
-
-
-void frame_buffer_size_callback(GLFWwindow* window, int width, int height)
+void frame_buffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
-
 }
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow *window)
 {
     bool key_escape_pressed = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
     if (key_escape_pressed)
@@ -215,6 +209,4 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
         return;
     }
-
-
 }

@@ -163,4 +163,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.5.shaders_exercise2
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/3.6.shaders_exercise3)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.1.textures)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.2.textures_combined)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.3.textures_exercise1)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.4.textures_exercise2)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.5.textures_exercise3)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/4.6.textures_exercise4)
 
