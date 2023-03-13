@@ -16,9 +16,27 @@
 
 void frame_buffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
+void mouse_callback(GLFWwindow* window, double xPos, double yPos);
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
+
+
+glm::vec3 cameraPos     = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront   = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp      = glm::vec3(0.0f, 1.0f, 0.0f);
+float cameraSpeed       = 2.0f; // 相机移动速速
+float deltaTime         = 0.0f; // 当前帧与上一帧的时间差
+float lastTime          = 0.0f; // 上一帧的时间
+
+
+float yaw               = -90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float pitch             = 0.0f;
+bool firstMouse         = true;
+float lastX             = 800.0f / 2.0;
+float lastY             = 600.0 / 2.0;
+float fov               = 45.0f;
 
 int main()
 {
@@ -43,7 +61,11 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
+
 
     // glad: load all OpenGL function pointer
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -205,7 +227,6 @@ int main()
     ImGui_ImplOpenGL3_Init("#version 330");
 
     float viewTranslate = -3.0f;
-    float fov = 45.0f;
 
     /*
 
@@ -233,6 +254,10 @@ int main()
     unsigned int frame = 0;
     while (!glfwWindowShouldClose(window))
     {
+
+        float currentTime = (float)glfwGetTime();
+        deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
         frame++;
         // input
         processInput(window);
@@ -248,6 +273,10 @@ int main()
             ImGui::NewLine();
             ImGui::SliderFloat("viewTranslate", &viewTranslate, -5.0f, -1.0f);
             ImGui::SliderFloat("fov", &fov, 0.0f, 90.0f);
+            ImGui::NewLine();
+            ImGui::Text("camera");
+            ImGui::SliderFloat("cameraSpeed", &cameraSpeed, 0.0f, 100.0f);
+
             ImGui::End();
         }
 
@@ -277,7 +306,8 @@ int main()
         float camX = static_cast<float>(sin(glfwGetTime()) * radius);
         float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
         // 摄像机位置 目标位置 up向量
-        u_View = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        // u_View = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        u_View = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
         shader.use();
         unsigned int u_ModelLoc      = glGetUniformLocation(shader.ID, "u_Model");
@@ -335,4 +365,64 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
         return;
     }
+
+    float cameraMoveSpeed = cameraSpeed * deltaTime; // adjust accordingly
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraMoveSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraMoveSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraMoveSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraMoveSpeed;
+}
+
+
+
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+{
+
+    float f_Xpos = static_cast<float>(xPos);
+    float f_Ypos = static_cast<float>(yPos);
+
+    if (firstMouse)
+    {
+        lastX = f_Xpos;
+        lastY = f_Ypos;
+        firstMouse = false;
+    }
+    float xoffset = f_Xpos - lastX;
+    float yoffset = lastY - f_Ypos; // reversed since y-coordinates go from bottom to top
+
+
+    lastX = f_Xpos;
+    lastY = f_Ypos;
+    float sensitivity = 0.1f; // change this value to your liking
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    // make sure that when pitch is out of bounds, screen doesn't get flipped
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 front;
+    // 根据俯仰角和偏航角计算一个相机front
+    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(front);
+}
+
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
+{
+    fov -= (float)yOffset;
+    if (fov < 1.0f)
+        fov = 1.0f;
+    if (fov > 45.0f)
+        fov = 45.0f;
 }
