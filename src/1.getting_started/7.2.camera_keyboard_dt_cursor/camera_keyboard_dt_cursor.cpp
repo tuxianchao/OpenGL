@@ -16,6 +16,7 @@
 
 void frame_buffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
+void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
@@ -27,6 +28,13 @@ glm::vec3 cameraUp      = glm::vec3(0.0f, 1.0f, 0.0f);
 float cameraSpeed       = 2.0f; // 相机移动速速
 float deltaTime         = 0.0f; // 当前帧与上一帧的时间差
 float lastTime          = 0.0f; // 上一帧的时间
+
+
+float yaw               = -90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float pitch             = 0.0f;
+bool firstMouse         = true;
+float lastX             = 800.0f / 2.0;
+float lastY             = 600.0 / 2.0;
 
 int main()
 {
@@ -44,13 +52,15 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "camera_keyboard_dt", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "camera_keyboard_dt_cursor", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 
 
@@ -81,7 +91,7 @@ int main()
         spdlog::info("GL_EXTENSIONS: {0}", (char *)glGetStringi(GL_EXTENSIONS, i));
     }
 
-    Shader shader("camera_keyboard_dt.vs", "camera_keyboard_dt.fs");
+    Shader shader("camera_keyboard_dt_cursor.vs", "camera_keyboard_dt_cursor.fs");
 
     // setup vertex data (and buffer)
     // =============================
@@ -366,3 +376,42 @@ void processInput(GLFWwindow *window)
 }
 
 
+
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+{
+
+    float f_Xpos = static_cast<float>(xPos);
+    float f_Ypos = static_cast<float>(yPos);
+
+    if (firstMouse)
+    {
+        lastX = f_Xpos;
+        lastY = f_Ypos;
+        firstMouse = false;
+    }
+    float xoffset = f_Xpos - lastX;
+    float yoffset = lastY - f_Ypos; // reversed since y-coordinates go from bottom to top
+
+
+    lastX = f_Xpos;
+    lastY = f_Ypos;
+    float sensitivity = 0.1f; // change this value to your liking
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    // make sure that when pitch is out of bounds, screen doesn't get flipped
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 front;
+    // 根据俯仰角和偏航角计算一个相机front
+    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(front);
+}
