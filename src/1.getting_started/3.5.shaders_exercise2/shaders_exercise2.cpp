@@ -29,7 +29,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_WIDTH, "shaders_exercise1", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "shaders_exercise1", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -96,7 +96,7 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-  
+
 
     // setup imgui
     IMGUI_CHECKVERSION();
@@ -139,7 +139,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        
+
 
         shader.use();
         shader.setBool("u_enableColor", u_enableColor);

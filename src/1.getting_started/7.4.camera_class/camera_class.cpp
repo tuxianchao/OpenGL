@@ -1,7 +1,8 @@
 #include "glad.h"
 #include "GLFW/glfw3.h"
 #include "spdlog/spdlog.h"
-#include "learn_opengl/shader_m.h"
+#include <learn_opengl/shader_m.h>
+#include <learn_opengl/camera.h>
 
 #include <stb_image.h>
 #include <learn_opengl/file_system.h>
@@ -14,27 +15,25 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+
 void frame_buffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow* window, double xPos, double yPos);
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
 
-glm::vec3 cameraPos     = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront   = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp      = glm::vec3(0.0f, 1.0f, 0.0f);
-float cameraSpeed       = 2.0f; // 相机移动速速
+// camera
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
 float deltaTime         = 0.0f; // 当前帧与上一帧的时间差
 float lastTime          = 0.0f; // 上一帧的时间
 
-
-float yaw               = -90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch             = 0.0f;
 bool firstMouse         = true;
-float lastX             = 800.0f / 2.0;
-float lastY             = 600.0 / 2.0;
+float lastX             = SCREEN_WIDTH / 2.0;
+float lastY             = SCREEN_HEIGHT / 2.0;
 
 int main()
 {
@@ -52,7 +51,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "camera_keyboard_dt_cursor", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "camera_class", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -61,6 +60,7 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 
 
@@ -91,7 +91,7 @@ int main()
         spdlog::info("GL_EXTENSIONS: {0}", (char *)glGetStringi(GL_EXTENSIONS, i));
     }
 
-    Shader shader("camera_keyboard_dt_cursor.vs", "camera_keyboard_dt_cursor.fs");
+    Shader shader("camera_class.vs", "camera_class.fs");
 
     // setup vertex data (and buffer)
     // =============================
@@ -224,7 +224,6 @@ int main()
     ImGui_ImplOpenGL3_Init("#version 330");
 
     float viewTranslate = -3.0f;
-    float fov = 45.0f;
 
     /*
 
@@ -270,10 +269,7 @@ int main()
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::NewLine();
             ImGui::SliderFloat("viewTranslate", &viewTranslate, -5.0f, -1.0f);
-            ImGui::SliderFloat("fov", &fov, 0.0f, 90.0f);
             ImGui::NewLine();
-            ImGui::Text("camera");
-            ImGui::SliderFloat("cameraSpeed", &cameraSpeed, 0.0f, 100.0f);
 
             ImGui::End();
         }
@@ -291,29 +287,16 @@ int main()
         glm::mat4 u_View        = glm::mat4(1.0);
         glm::mat4 u_Projection  = glm::mat4(1.0);
 
-        // 旋转
-        u_Model = glm::rotate(u_Model, glm::radians(50.0f) * (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-        // 平移：看起来物体后退
-        u_View = glm::translate(u_View, glm::vec3(0.0f, 0.0f, viewTranslate));
-        // 使用一个简单的透视投影
-        float aspectRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
-        u_Projection = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 1000.0f);
 
+        // u_View
+        // camera/view transformation
+        u_View = camera.getViewMatrix();
 
-        float radius = 10.0f;
-        float camX = static_cast<float>(sin(glfwGetTime()) * radius);
-        float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
-        // 摄像机位置 目标位置 up向量
-        // u_View = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        u_View = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        // u_Projection
+        u_Projection = glm::perspective(glm::radians(camera.m_zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
         shader.use();
-        unsigned int u_ModelLoc      = glGetUniformLocation(shader.ID, "u_Model");
-        unsigned int u_ViewLoc       = glGetUniformLocation(shader.ID, "u_View");
-        unsigned int u_ProjectionLoc = glGetUniformLocation(shader.ID, "u_Projection");
-        // 三种方式设置unifrom
-        glUniformMatrix4fv(u_ModelLoc, 1, GL_FALSE, glm::value_ptr(u_Model));
-        glUniformMatrix4fv(u_ViewLoc, 1, GL_FALSE, &u_View[0][0]);
+        shader.setMat4("u_View", u_View);
         shader.setMat4("u_Projection", u_Projection);
 
 
@@ -323,13 +306,13 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36); // 画面36个顶点的立方体
         for (unsigned int i = 0; i < 10; i++)
         {
+            // u_Model
             glm::mat4 u_Model = glm::mat4(1.0f);
             u_Model = glm::translate(u_Model, cubePositions[i]);
             u_Model = glm::rotate(u_Model, glm::radians(50.0f) * (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
             float angle = 20.0f * i;
             u_Model = glm::rotate(u_Model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             shader.setMat4("u_Model", u_Model);
-
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
@@ -363,16 +346,22 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
         return;
     }
-
-    float cameraMoveSpeed = cameraSpeed * deltaTime; // adjust accordingly
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraMoveSpeed * cameraFront;
+    {
+        camera.processKeyBoard(FORWARD, deltaTime);
+    }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraMoveSpeed * cameraFront;
+    {
+        camera.processKeyBoard(BACKWARD, deltaTime);
+    }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraMoveSpeed;
+    {
+        camera.processKeyBoard(LEFT, deltaTime);
+    }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraMoveSpeed;
+    {
+        camera.processKeyBoard(RIGHT, deltaTime);
+    }
 }
 
 
@@ -399,19 +388,10 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    yaw += xoffset;
-    pitch += yoffset;
+    camera.processMouseMovement(xoffset, yoffset);
+}
 
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    glm::vec3 front;
-    // 根据俯仰角和偏航角计算一个相机front
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(front);
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
+{
+    camera.processMouseScroll((float)yOffset);
 }
