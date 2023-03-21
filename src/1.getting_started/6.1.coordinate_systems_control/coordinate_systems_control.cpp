@@ -263,7 +263,7 @@ int main()
         // 平移：看起来物体后退
         u_View = glm::translate(u_View, glm::vec3(0.0f, 0.0f, viewTranslate));
         // 使用一个简单的透视投影
-        float aspectRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
+        float aspectRatio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
         u_Projection = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 1000.0f);
 
         shader.use();
