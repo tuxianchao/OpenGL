@@ -184,6 +184,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.2.camera_keyboard_d
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.2.camera_keyboard_dt_cursor)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.3.camera_keyboard_zoom)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.4.camera_class)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.5.camera_exercise1)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.6.camera_exercise2)
 
 
 # course chapter 2
