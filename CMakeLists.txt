@@ -193,4 +193,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.6.camera_exercise2)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/1.colors)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.1.basic_lighting_diffuse)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.2.basic_lighting_specular)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.3.basic_lighting_practice1)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.4.basic_lighting_practice2)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.5.basic_lighting_practice3)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.6.basic_lighting_practice4)
 # course chapter 3
