@@ -192,4 +192,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.6.camera_exercise2)
 # course chapter 2
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/1.colors)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.1.basic_lighting_diffuse)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.2.basic_lighting_specular)
 # course chapter 3
