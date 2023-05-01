@@ -2,7 +2,7 @@
 #include "GLFW/glfw3.h"
 #include "spdlog/spdlog.h"
 #include <learn_opengl/shader_m.h>
-#include <learn_opengl/camera.h>
+#include "camera_class.h"
 
 #include <stb_image.h>
 #include <learn_opengl/file_system.h>
@@ -297,7 +297,8 @@ int main()
         // u_View
         // camera/view transformation
         // u_View = camera.getViewMatrix();
-        u_View = customLookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        u_View = customLookAt(camera.m_position, camera.m_position + camera.m_front, camera.m_up);
+        //u_View = customLookAt(glm::vec3(cameraPos.x, 0.0f, cameraPos.z), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
         // u_Projection
         u_Projection = glm::perspective(glm::radians(camera.m_zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);

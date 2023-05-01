@@ -1,9 +1,11 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
+
 #include <glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "spdlog/spdlog.h"
 
 #include <vector>
 
@@ -85,8 +87,9 @@ public:
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
     {
+        spdlog::info("processMouseMovement xoffset:{0} yoffset:{1}", xoffset, yoffset);
         xoffset *= m_mouseSensitivity;
-        yoffset *= m_mouseSensitivity;
+        yoffset *= m_mouseSensitivity; 
 
         m_yaw += xoffset;
         m_pitch += yoffset;
