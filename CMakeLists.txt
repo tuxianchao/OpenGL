@@ -188,6 +188,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.5.camera_exercise1)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.6.camera_exercise2)
 
 
-# course chapter 2
 
+# course chapter 2
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/1.colors)
 # course chapter 3
