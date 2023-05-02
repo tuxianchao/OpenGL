@@ -14,7 +14,8 @@ Message(${CMAKE_BUILD_TYPE})
 
 # output
 if(WIN32)
-    add_definitions(/W4 /D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(/W0 /D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(/MP) # multithreaded build
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
     set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
@@ -206,4 +207,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/4.3.light_map_practice2)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/4.4.light_map_practice3)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/4.5.light_map_practice4)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.1.light_casters_directional)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.2.light_casters_point)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.3.light_casters_spot)
 # course chapter 3
