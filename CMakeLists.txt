@@ -209,4 +209,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/4.5.light_map_practice4)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.1.light_casters_directional)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.2.light_casters_point)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.3.light_casters_spot)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.4.light_casters_spot_soft)
 # course chapter 3
