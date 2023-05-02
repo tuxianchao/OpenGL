@@ -55,7 +55,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "light_map_specular", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "light_map_practice2", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -95,7 +95,7 @@ int main()
         spdlog::info("GL_EXTENSIONS: {0}", (char*)glGetStringi(GL_EXTENSIONS, i));
     }
 
-    Shader lightingShader("light_map_specular.vs", "light_map_specular.fs");
+    Shader lightingShader("light_map_practice2.vs", "light_map_practice2.fs");
     Shader lightCubeShader("light_cube.vs", "light_cube.fs");
 
     // setup vertex data (and buffer)
@@ -182,7 +182,7 @@ int main()
 
     lightingShader.use();
     lightingShader.setInt("material.diffuse", 0); // 设置0号纹理作为漫反射贴图
-    lightingShader.setInt("material.specular", 1);
+    lightingShader.setInt("material.specular", 1);// 设置1纹理单元作为高光贴图
     // setup imgui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -212,7 +212,7 @@ int main()
     glm::vec3 light_diffuse(0.5f, 0.5f, 0.5f);
     glm::vec3 light_specular(1.0f, 1.0f, 1.0f);
     // lighting
-    glm::vec3 lightPos(1.0f, 0.25f, 1.0f);
+    glm::vec3 lightPos(2.0f, 0.25f, 2.0f);
 
     bool lightMove = false;
 
@@ -295,13 +295,14 @@ int main()
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
+
+        // bind specular map
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularMap);
 
         // render the cube
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
 
 
         // render lamp object

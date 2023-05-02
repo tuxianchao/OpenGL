@@ -55,7 +55,7 @@ int main()
 
     // create glfw window
     // =================
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "light_map_specular", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "light_map_practice3", nullptr, nullptr);
     if (window == nullptr)
     {
         spdlog::error("Failed to create glfw window.");
@@ -95,7 +95,7 @@ int main()
         spdlog::info("GL_EXTENSIONS: {0}", (char*)glGetStringi(GL_EXTENSIONS, i));
     }
 
-    Shader lightingShader("light_map_specular.vs", "light_map_specular.fs");
+    Shader lightingShader("light_map_practice3.vs", "light_map_practice3.fs");
     Shader lightCubeShader("light_cube.vs", "light_cube.fs");
 
     // setup vertex data (and buffer)
@@ -178,7 +178,7 @@ int main()
     // load textures (we now use a utility function to keep the code more organized)
     // -----------------------------------------------------------------------------
     unsigned int diffuseMap = loadTexture(FileSystem::getResPath("/textures/container2.png").c_str());
-    unsigned int specularMap = loadTexture(FileSystem::getResPath("/textures/container2_specular.png").c_str());
+    unsigned int specularMap = loadTexture(FileSystem::getResPath("/textures/container2_specular_colored.png").c_str());
 
     lightingShader.use();
     lightingShader.setInt("material.diffuse", 0); // 设置0号纹理作为漫反射贴图
@@ -212,7 +212,7 @@ int main()
     glm::vec3 light_diffuse(0.5f, 0.5f, 0.5f);
     glm::vec3 light_specular(1.0f, 1.0f, 1.0f);
     // lighting
-    glm::vec3 lightPos(1.0f, 0.25f, 1.0f);
+    glm::vec3 lightPos(1.0f, 0.3f, 1.0f);
 
     bool lightMove = false;
 
