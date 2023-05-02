@@ -216,3 +216,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.2.multiple_lights_factory)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.3.multiple_lights_horror)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.4.multiple_lights_biochemical_lab)
 # course chapter 3
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/3.model_loading/1.model_loading)
