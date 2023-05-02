@@ -211,4 +211,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.2.light_casters_point)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.3.light_casters_spot)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/5.4.light_casters_spot_soft)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.multiple_lights)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.1.multiple_lights_desert)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.2.multiple_lights_factory)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.3.multiple_lights_horror)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.4.multiple_lights_biochemical_lab)
 # course chapter 3
