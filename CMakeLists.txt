@@ -190,7 +190,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.5.camera_exercise1)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/1.getting_started/7.6.camera_exercise2)
 
 
-
 # course chapter 2
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/1.colors)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.1.basic_lighting_diffuse)
@@ -215,6 +214,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.1.multiple_lights_desert)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.2.multiple_lights_factory)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.3.multiple_lights_horror)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/6.4.multiple_lights_biochemical_lab)
-# course chapter 3
 
+# course chapter 3
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/3.model_loading/1.model_loading)
+
+#course chapter 4
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/1.1.depth_testing)
