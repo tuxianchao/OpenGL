@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include "glad.h"
 #include <glm/glm.hpp>
@@ -56,7 +55,7 @@ public:
         }
         catch (std::ifstream::failure &e)
         {
-            spdlog::error("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: {0}", e.what());
+            spdlog::error("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: {0} path {1} {2}", e.what(), vertexPath, fragmentPath);
         }
         const char *vShaderCode = vertexCode.c_str();
         const char *fShaderCode = fragmentCode.c_str();
@@ -190,4 +189,3 @@ private:
         }
     }
 };
-#endif

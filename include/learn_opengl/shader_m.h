@@ -44,6 +44,7 @@ public:
         catch (std::ifstream::failure &e)
         {
             spdlog::error("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: {0}", e.what());
+            spdlog::error("create shader {0} {1} fail", vertexPath, fragmentPath);
         }
 
         const char *vShaderCode = vertexCodeString.c_str();
@@ -71,6 +72,7 @@ public:
         // delete the shaders as they're linked into our program now and no longer necessary
         glDeleteShader(vertex);
         glDeleteShader(fragment);
+        spdlog::info("create shader {0} {1} success ID {2}", vertexPath, fragmentPath, ID);
     }
 
     ~Shader()
