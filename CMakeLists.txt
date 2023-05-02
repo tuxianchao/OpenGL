@@ -224,3 +224,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/1.2.depth_testing_vie
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/2.stencil_testing)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/3.1.blending_discard)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/3.2.blending_sort)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/4.face_culling)
