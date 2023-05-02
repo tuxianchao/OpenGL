@@ -220,3 +220,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/3.model_loading/1.model_loading)
 
 #course chapter 4
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/1.1.depth_testing)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/4.advanced_opengl/1.2.depth_testing_view)
