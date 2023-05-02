@@ -14,6 +14,7 @@ Message(${CMAKE_BUILD_TYPE})
 
 # output
 if(WIN32)
+    add_definitions(/W4 /D_CRT_SECURE_NO_WARNINGS)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
     set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
