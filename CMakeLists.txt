@@ -197,4 +197,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.3.basic_lighting_practice1
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.4.basic_lighting_practice2)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.5.basic_lighting_practice3)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.6.basic_lighting_practice4)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/3.1.materials)
 # course chapter 3
