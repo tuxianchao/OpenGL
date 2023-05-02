@@ -36,7 +36,7 @@ float lastX = SCREEN_WIDTH / 2.0;
 float lastY = SCREEN_HEIGHT / 2.0;
 
 // lighting
-glm::vec3 lightPos(1.0f, 1.0f, 1.0f);
+glm::vec3 lightPos(1.0f, 0.25f, 1.0f);
 
 int main()
 {
