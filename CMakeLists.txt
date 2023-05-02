@@ -198,4 +198,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.4.basic_lighting_practice2
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.5.basic_lighting_practice3)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/2.6.basic_lighting_practice4)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/3.1.materials)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/3.2.materials_practice)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/4.1.light_map_diffuse)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/2.lighting/4.2.light_map_specular)
 # course chapter 3
