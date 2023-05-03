@@ -99,6 +99,7 @@ int main()
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST); // 开启深度缓冲
+    glEnable(GL_PROGRAM_POINT_SIZE);
     // glEnable(GL_BLEND);// 开启混合
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

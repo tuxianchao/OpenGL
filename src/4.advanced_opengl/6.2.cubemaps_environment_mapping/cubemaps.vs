@@ -14,4 +14,5 @@ void main()
     v_Normal = mat3(transpose(inverse(u_Model))) * aNormal;
     v_Position = vec3(u_Model * vec4(aPos, 1.0));
     gl_Position = u_Projection * u_View * u_Model * vec4(aPos, 1.0);
+    gl_PointSize = gl_Position.z;    
 }
